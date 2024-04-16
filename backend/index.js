@@ -19,7 +19,12 @@ const pool = new pg.Pool({
 
 console.log("Connecting...:")
 
-app.use(cors());
+const corsOptions = {
+    origin: 'http://192.168.159.130',
+    optionsSuccessStatus: 200 // legacy browser support (IE11, various SmartTVs)
+};
+
+app.use(cors(corsOptions));
 app.use(bodyParser.json());
 app.use(
     bodyParser.urlencoded({
