@@ -20,7 +20,7 @@ const pool = new pg.Pool({
 console.log("Connecting...:")
 
 const corsOptions = {
-    origin: 'http://localhost',
+    origin: 'http://localhost:8080',
     optionsSuccessStatus: 200 // legacy browser support (IE11, various SmartTVs)
 };
 
