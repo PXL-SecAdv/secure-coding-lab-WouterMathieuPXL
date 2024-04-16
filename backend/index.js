@@ -30,14 +30,16 @@ app.get('/authenticate/:username/:password', async (request, response) => {
     const username = request.params.username;
     const password = request.params.password;
 
-    const query = `SELECT * FROM users WHERE user_name='${username}' and password='${password}'`;
-    console.log(query);
-    pool.query(query, (error, results) => {
-      if (error) {
-        throw error
-      }
-      response.status(200).json(results.rows)});
-      
+    // Gebruik parameterized queries om SQL-injectie te voorkomen
+    const query = 'SELECT * FROM users WHERE user_name=$1 and password=$2';
+
+    pool.query(query, [username, password], (error, results) => {
+        if (error) {
+            response.status(500).send('Server error');
+            return;
+        }
+        response.status(200).json(results.rows)
+    });
 });
 
 app.listen(port, () => {
