@@ -1,3 +1,4 @@
+const bcrypt = require('bcrypt');
 const pg = require('pg');
 
 const express = require('express');
@@ -30,15 +31,25 @@ app.get('/authenticate/:username/:password', async (request, response) => {
     const username = request.params.username;
     const password = request.params.password;
 
-    // Gebruik parameterized queries om SQL-injectie te voorkomen
-    const query = 'SELECT * FROM users WHERE user_name=$1 and password=$2';
+    const query = 'SELECT * FROM users WHERE user_name=$1';
 
-    pool.query(query, [username, password], (error, results) => {
+    pool.query(query, [username], async (error, results) => {
         if (error) {
             response.status(500).send('Server error');
             return;
         }
-        response.status(200).json(results.rows)
+
+        if (results.rows.length > 0) {
+            const user = results.rows[0];
+            const match = await bcrypt.compare(password, user.password);
+            if (match) {
+                response.status(200).json(user);
+            } else {
+                response.status(401).send('Authentication failed');
+            }
+        } else {
+            response.status(404).send('User not found');
+        }
     });
 });
 
