@@ -24,7 +24,7 @@ const corsOptions = {
     optionsSuccessStatus: 200 // legacy browser support (IE11, various SmartTVs)
 };
 
-app.use(cors(corsOptions));
+app.use(cors());
 app.use(bodyParser.json());
 app.use(
     bodyParser.urlencoded({
